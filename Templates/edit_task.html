@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Edit Task - Patricia's To-Do List</title>
+
+    <style>
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f8eafa;
+            margin: 0;
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+        h1 {
+            text-align: center;
+            color: #8e44ad;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .time-row {
+            display: flex;
+            gap: 10px;
+        }
+
+        .time-row select {
+            flex: 1;
+        }
+
+        .checkbox {
+            margin-top: 20px;
+        }
+
+        .checkbox label {
+            font-weight: normal;
+        }
+
+        .buttons {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .save-button {
+            flex: 1;
+            background: #8e44ad;
+            color: white;
+            border: none;
+            padding: 13px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .cancel-button {
+            flex: 1;
+            background: #777;
+            color: white;
+            padding: 13px;
+            border-radius: 8px;
+            text-align: center;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .save-button:hover {
+            background: #732d91;
+        }
+
+        .cancel-button:hover {
+            background: #555;
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="container">
+
+    <h1>✏️ Edit Task</h1>
+
+    <form
+        method="POST"
+        action="/edit-task/{{ task.id }}"
+    >
+
+        <label for="title">
+            Task Title
+        </label>
+
+        <input
+            type="text"
+            id="title"
+            name="title"
+            value="{{ task.title }}"
+            required
+        >
+
+
+        <label for="description">
+            Description
+        </label>
+
+        <textarea
+            id="description"
+            name="description"
+        >{{ task.description or '' }}</textarea>
+
+
+        <label for="task_date">
+            Date
+        </label>
+
+        <input
+            type="date"
+            id="task_date"
+            name="task_date"
+            value="{{ task.task_date }}"
+            required
+        >
+
+
+        <label>
+            Time
+        </label>
+
+        <div class="time-row">
+
+            <select
+                name="task_hour"
+                required
+            >
+
+                {% for h in range(1, 13) %}
+
+                    <option
+                        value="{{ h }}"
+                        {% if hour == h %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ h }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <select
+                name="task_minute"
+                required
+            >
+
+                {% for m in range(0, 60) %}
+
+                    <option
+                        value="{{ '%02d' | format(m) }}"
+                        {% if minute == '%02d' | format(m) %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ '%02d' | format(m) }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <select
+                name="task_period"
+                required
+            >
+
+                <option
+                    value="AM"
+                    {% if period == "AM" %}
+                        selected
+                    {% endif %}
+                >
+                    AM
+                </option>
+
+                <option
+                    value="PM"
+                    {% if period == "PM" %}
+                        selected
+                    {% endif %}
+                >
+                    PM
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <label for="repeat_type">
+            Repeat
+        </label>
+
+        <select
+            id="repeat_type"
+            name="repeat_type"
+            required
+        >
+
+            <option
+                value="none"
+                {% if task.repeat_type == "none" %}
+                    selected
+                {% endif %}
+            >
+                Does not repeat
+            </option>
+
+            <option
+                value="daily"
+                {% if task.repeat_type == "daily" %}
+                    selected
+                {% endif %}
+            >
+                Daily
+            </option>
+
+            <option
+                value="weekly"
+                {% if task.repeat_type == "weekly" %}
+                    selected
+                {% endif %}
+            >
+                Weekly
+            </option>
+
+            <option
+                value="monthly"
+                {% if task.repeat_type == "monthly" %}
+                    selected
+                {% endif %}
+            >
+                Monthly
+            </option>
+
+        </select>
+
+
+        <div class="checkbox">
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="reminder_enabled"
+                    {% if task.reminder_enabled %}
+                        checked
+                    {% endif %}
+                >
+
+                🔊 Enable Voice Reminder
+
+            </label>
+
+
+            <label>
+
+                <input
+                    type="checkbox"
+                    name="music_enabled"
+                    {% if task.music_enabled %}
+                        checked
+                    {% endif %}
+                >
+
+                🎵 Enable Soft Music
+
+            </label>
+
+        </div>
+
+
+        <div class="buttons">
+
+            <button
+                type="submit"
+                class="save-button"
+            >
+                💾 Save Changes
+            </button>
+
+            <a
+                href="/"
+                class="cancel-button"
+            >
+                Cancel
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+
+</html>

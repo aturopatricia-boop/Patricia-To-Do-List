@@ -1,0 +1,207 @@
+/* ==========================================
+   GENERAL PAGE
+========================================== */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f7f5fb;
+    color: #333;
+}
+
+
+/* ==========================================
+   HEADER
+========================================== */
+
+header {
+    background: #8e44ad;
+    color: white;
+    padding: 30px 20px;
+    text-align: center;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 34px;
+}
+
+header p {
+    margin-top: 10px;
+    font-size: 17px;
+}
+
+
+/* ==========================================
+   MAIN CONTAINER
+========================================== */
+
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 30px auto;
+}
+
+
+/* ==========================================
+   HEADINGS
+========================================== */
+
+.container h2 {
+    color: #6c3483;
+}
+
+
+/* ==========================================
+   BUTTONS
+========================================== */
+
+button {
+    background: #8e44ad;
+    color: white;
+    border: none;
+    padding: 12px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #732d91;
+}
+
+
+/* ==========================================
+   TASK CARDS
+========================================== */
+
+.task-card {
+    background: white;
+    padding: 22px;
+    margin: 18px 0;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-left: 6px solid #8e44ad;
+}
+
+.task-card h3 {
+    margin-top: 0;
+    color: #8e44ad;
+    font-size: 21px;
+}
+
+.task-info {
+    margin: 10px 0;
+    line-height: 1.5;
+}
+
+
+/* ==========================================
+   FORM
+========================================== */
+
+form {
+    background: white;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+form label {
+    display: block;
+    margin-top: 18px;
+    margin-bottom: 5px;
+}
+
+input,
+textarea,
+select {
+    width: 100%;
+    padding: 11px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 7px;
+    box-sizing: border-box;
+    font-size: 15px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+
+/* ==========================================
+   CHECKBOXES
+========================================== */
+
+input[type="checkbox"] {
+    width: auto;
+    margin-right: 8px;
+}
+
+
+/* ==========================================
+   TIME SELECTORS
+========================================== */
+
+form select[name="task_hour"],
+form select[name="task_minute"],
+form select[name="task_period"] {
+    width: 31%;
+    display: inline-block;
+}
+
+
+/* ==========================================
+   LINKS
+========================================== */
+
+a {
+    color: #8e44ad;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+
+/* ==========================================
+   HORIZONTAL LINE
+========================================== */
+
+hr {
+    border: none;
+    border-top: 1px solid #ddd;
+    margin: 25px 0;
+}
+
+
+/* ==========================================
+   MOBILE
+========================================== */
+
+@media (max-width: 600px) {
+
+    .container {
+        width: 94%;
+    }
+
+    header h1 {
+        font-size: 26px;
+    }
+
+    form {
+        padding: 20px;
+    }
+
+    form select[name="task_hour"],
+    form select[name="task_minute"],
+    form select[name="task_period"] {
+        width: 30%;
+    }
+
+}

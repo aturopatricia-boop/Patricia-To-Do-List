@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Event - Patricia's To-Do List</title>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f7f3ff;
+            color: #333;
+        }
+
+
+        .container {
+            width: 90%;
+            max-width: 650px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+
+        h1 {
+            text-align: center;
+            color: #7b2cbf;
+            margin-bottom: 30px;
+        }
+
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+
+
+        input,
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+
+        .time-row {
+            display: flex;
+            gap: 10px;
+        }
+
+
+        .time-row select {
+            flex: 1;
+        }
+
+
+        .reminder-box {
+            margin-top: 25px;
+            padding: 20px;
+            background: #f3e8ff;
+            border-radius: 10px;
+        }
+
+
+        .reminder-box h3 {
+            margin-top: 0;
+            color: #7b2cbf;
+        }
+
+
+        .checkbox-row {
+            margin-top: 15px;
+        }
+
+
+        .checkbox-row input {
+            width: auto;
+            margin-right: 8px;
+        }
+
+
+        .checkbox-row label {
+            display: inline;
+            font-weight: normal;
+        }
+
+
+        #minutesReminder,
+        #daysReminder {
+            margin-top: 15px;
+        }
+
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+
+        button,
+        .cancel-button {
+            flex: 1;
+            padding: 13px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+        }
+
+
+        .save-button {
+            background: #7b2cbf;
+            color: white;
+        }
+
+
+        .save-button:hover {
+            background: #5a189a;
+        }
+
+
+        .cancel-button {
+            background: #ddd;
+            color: #333;
+        }
+
+
+        .cancel-button:hover {
+            background: #bbb;
+        }
+
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="container">
+
+    <h1>
+        ✏️ Edit Event
+    </h1>
+
+
+    <form method="POST">
+
+
+        <!-- EVENT TITLE -->
+
+        <label for="title">
+            Event Title
+        </label>
+
+        <input
+            type="text"
+            id="title"
+            name="title"
+            value="{{ event.title }}"
+            required
+        >
+
+
+        <!-- DESCRIPTION -->
+
+        <label for="description">
+            Description
+        </label>
+
+        <textarea
+            id="description"
+            name="description"
+        >{{ event.description or "" }}</textarea>
+
+
+        <!-- EVENT DATE -->
+
+        <label for="event_date">
+            Event Date
+        </label>
+
+        <input
+            type="date"
+            id="event_date"
+            name="event_date"
+            value="{{ event.event_date }}"
+            required
+        >
+
+
+        <!-- EVENT TIME -->
+
+        <label>
+            Event Time
+        </label>
+
+
+        <div class="time-row">
+
+            <select
+                name="event_hour"
+                required
+            >
+
+                {% for h in range(1, 13) %}
+
+                    <option
+                        value="{{ h }}"
+                        {% if hour == h %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ h }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <select
+                name="event_minute"
+                required
+            >
+
+                {% for m in range(0, 60) %}
+
+                    <option
+                        value="{{ m }}"
+                        {% if minute|int == m %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ "%02d"|format(m) }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+
+            <select
+                name="event_period"
+                required
+            >
+
+                <option
+                    value="AM"
+                    {% if period == "AM" %}
+                        selected
+                    {% endif %}
+                >
+                    AM
+                </option>
+
+                <option
+                    value="PM"
+                    {% if period == "PM" %}
+                        selected
+                    {% endif %}
+                >
+                    PM
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- =========================
+             REMINDER SETTINGS
+        ========================= -->
+
+        <div class="reminder-box">
+
+            <h3>
+                🔔 Reminder Settings
+            </h3>
+
+
+            <!-- ENABLE REMINDER -->
+
+            <div class="checkbox-row">
+
+                <input
+                    type="checkbox"
+                    id="reminder_enabled"
+                    name="reminder_enabled"
+                    {% if event.reminder_enabled %}
+                        checked
+                    {% endif %}
+                >
+
+                <label for="reminder_enabled">
+                    Enable reminder
+                </label>
+
+            </div>
+
+
+            <!-- REMINDER TYPE -->
+
+            <label for="reminderType">
+                Remind me before the event:
+            </label>
+
+
+            <select
+                name="reminder_type"
+                id="reminderType"
+                onchange="changeReminderType()"
+            >
+
+                <option
+                    value="minutes"
+                    {% if event.reminder_before_days == 0 %}
+                        selected
+                    {% endif %}
+                >
+                    Minutes before
+                </option>
+
+
+                <option
+                    value="days"
+                    {% if event.reminder_before_days
+                          and event.reminder_before_days > 0 %}
+                        selected
+                    {% endif %}
+                >
+                    Days before
+                </option>
+
+            </select>
+
+
+            <!-- =========================
+                 MINUTES
+            ========================= -->
+
+            <div id="minutesReminder">
+
+                <label for="reminder_before_minutes">
+                    How many minutes before?
+                </label>
+
+
+                <select
+                    name="reminder_before_minutes"
+                    id="reminder_before_minutes"
+                >
+
+                    <option
+                        value="5"
+                        {% if event.reminder_before_minutes == 5 %}
+                            selected
+                        {% endif %}
+                    >
+                        5 minutes before
+                    </option>
+
+
+                    <option
+                        value="10"
+                        {% if event.reminder_before_minutes == 10 %}
+                            selected
+                        {% endif %}
+                    >
+                        10 minutes before
+                    </option>
+
+
+                    <option
+                        value="15"
+                        {% if event.reminder_before_minutes == 15 %}
+                            selected
+                        {% endif %}
+                    >
+                        15 minutes before
+                    </option>
+
+
+                    <option
+                        value="30"
+                        {% if event.reminder_before_minutes == 30 %}
+                            selected
+                        {% endif %}
+                    >
+                        30 minutes before
+                    </option>
+
+
+                    <option
+                        value="60"
+                        {% if event.reminder_before_minutes == 60 %}
+                            selected
+                        {% endif %}
+                    >
+                        1 hour before
+                    </option>
+
+
+                    <option
+                        value="120"
+                        {% if event.reminder_before_minutes == 120 %}
+                            selected
+                        {% endif %}
+                    >
+                        2 hours before
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- =========================
+                 DAYS
+            ========================= -->
+
+            <div
+                id="daysReminder"
+                style="display: none;"
+            >
+
+                <label for="reminder_before_days">
+                    How many days before?
+                </label>
+
+
+                <select
+                    name="reminder_before_days"
+                    id="reminder_before_days"
+                >
+
+                    <option
+                        value="1"
+                        {% if event.reminder_before_days == 1 %}
+                            selected
+                        {% endif %}
+                    >
+                        1 day before
+                    </option>
+
+
+                    <option
+                        value="2"
+                        {% if event.reminder_before_days == 2 %}
+                            selected
+                        {% endif %}
+                    >
+                        2 days before
+                    </option>
+
+
+                    <option
+                        value="3"
+                        {% if event.reminder_before_days == 3 %}
+                            selected
+                        {% endif %}
+                    >
+                        3 days before
+                    </option>
+
+
+                    <option
+                        value="4"
+                        {% if event.reminder_before_days == 4 %}
+                            selected
+                        {% endif %}
+                    >
+                        4 days before
+                    </option>
+
+
+                    <option
+                        value="5"
+                        {% if event.reminder_before_days == 5 %}
+                            selected
+                        {% endif %}
+                    >
+                        5 days before
+                    </option>
+
+
+                    <option
+                        value="7"
+                        {% if event.reminder_before_days == 7 %}
+                            selected
+                        {% endif %}
+                    >
+                        7 days before
+                    </option>
+
+
+                    <option
+                        value="14"
+                        {% if event.reminder_before_days == 14 %}
+                            selected
+                        {% endif %}
+                    >
+                        14 days before
+                    </option>
+
+
+                    <option
+                        value="30"
+                        {% if event.reminder_before_days == 30 %}
+                            selected
+                        {% endif %}
+                    >
+                        30 days before
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- BUTTONS -->
+
+        <div class="buttons">
+
+            <button
+                type="submit"
+                class="save-button"
+            >
+                💾 Save Changes
+            </button>
+
+
+            <a
+                href="/"
+                class="cancel-button"
+            >
+                ❌ Cancel
+            </a>
+
+        </div>
+
+
+    </form>
+
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+
+<script>
+
+function changeReminderType() {
+
+    const type =
+        document.getElementById(
+            "reminderType"
+        ).value;
+
+
+    const minutesReminder =
+        document.getElementById(
+            "minutesReminder"
+        );
+
+
+    const daysReminder =
+        document.getElementById(
+            "daysReminder"
+        );
+
+
+    if (type === "days") {
+
+        minutesReminder.style.display =
+            "none";
+
+        daysReminder.style.display =
+            "block";
+
+    }
+
+    else {
+
+        minutesReminder.style.display =
+            "block";
+
+        daysReminder.style.display =
+            "none";
+
+    }
+
+}
+
+
+/*
+   Show the correct reminder section
+   when the page first opens.
+*/
+
+changeReminderType();
+
+</script>
+
+
+</body>
+
+</html>
