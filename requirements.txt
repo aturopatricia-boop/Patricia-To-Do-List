@@ -3,3 +3,4 @@ supabase
 python-dotenv
 APScheduler
 pyttsx3
+gunicorn
